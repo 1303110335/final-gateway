@@ -1,0 +1,13 @@
+server:
+  port: 8081   # 指定要监听的端口号
+dubbo:
+  application:
+    name: dubbo-consumer
+  registry:
+    address: 127.0.0.1:2181
+    protocol: zookeeper
+  protocol:
+    name: dubbo
+    port: 20880
+  consumer:
+    version: 1.0
