@@ -1,5 +1,5 @@
 /**
- * bianque.com
+ * xuleyan.com
  * Copyright (C) 2013-2021 All Rights Reserved.
  */
 package com.xuleyan.finals.web.task;
@@ -12,7 +12,6 @@ import com.alibaba.otter.canal.protocol.Message;
 import com.xuleyan.finals.common.constants.AccountConstants;
 import com.xuleyan.frame.extend.redis.jedis.JedisTemplate;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;

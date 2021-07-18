@@ -1,12 +1,11 @@
 /**
- * bianque.com
+ * xuleyan.com
  * Copyright (C) 2013-2021 All Rights Reserved.
  */
 package com.xuleyan.finals.service.api.impl;
 
 import com.xuleyan.finals.common.constants.AccountConstants;
 import com.xuleyan.finals.dal.mapper.AccountExtMapper;
-import com.xuleyan.finals.dal.mapper.AccountMapper;
 import com.xuleyan.finals.dal.mapper.GoodsSecondsKillMapper;
 import com.xuleyan.finals.dal.pojo.Account;
 import com.xuleyan.finals.dal.pojo.AccountCriteria;
