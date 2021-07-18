@@ -14,6 +14,10 @@
 
     <dependencies>
         <dependency>
+            <artifactId>bqhealth-cloud-interface</artifactId>
+            <groupId>com.alijk.bqhealth.cloud</groupId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>
         </dependency>
@@ -56,14 +60,31 @@
             <groupId>com.alibaba.boot</groupId>
             <artifactId>dubbo-spring-boot-starter</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.xuleyan.provider</groupId>
-            <artifactId>facade</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.xuleyan.provider</groupId>-->
+<!--            <artifactId>facade</artifactId>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>com.xuleyan.framework</groupId>
             <artifactId>extend</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.xuleyan.framework</groupId>
+            <artifactId>core</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.xuleyan</groupId>
+            <artifactId>dal</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.xuleyan</groupId>
+            <artifactId>common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>
