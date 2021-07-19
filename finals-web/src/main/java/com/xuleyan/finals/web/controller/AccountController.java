@@ -13,13 +13,12 @@ import com.xuleyan.frame.common.util.BQSnowFlakeUtils;
 import com.xuleyan.frame.extend.lock.DistributedLock;
 import com.xuleyan.frame.extend.redis.jedis.JedisTemplate;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
@@ -51,6 +50,22 @@ public class AccountController {
     @Encryption
     public String hello(@RequestBody User user) {
         return "hello";
+    }
+
+    @RequestMapping("/test")
+    public String test(@RequestParam String name) {
+        return name + "test";
+    }
+
+
+    @RequestMapping("/list")
+    public Object getList() {
+        Account account = new Account();
+        account.setId(1);
+        account.setName(null);
+        List<Account> accountList = new ArrayList<>();
+        accountList.add(account);
+        return accountList;
     }
 
     /**

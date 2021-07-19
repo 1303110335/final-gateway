@@ -12,6 +12,9 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Method;
+import java.util.Arrays;
+
 /**
  *
  * @author xuleyan
@@ -31,8 +34,10 @@ public class GlobalHandlerAspect {
         Object proceed = null;
         try {
             MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+            Method method = signature.getMethod();
+            System.out.println("method:" + method.getName());
             Object[] args = joinPoint.getArgs();
-            log.info("aspect: preSet >> args = {}", args);
+            System.out.println("args:" + Arrays.toString(args));
             proceed = joinPoint.proceed();
         } catch (Throwable throwable) {
             throwable.printStackTrace();
