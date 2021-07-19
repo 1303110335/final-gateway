@@ -9,6 +9,7 @@ import com.xuleyan.finals.common.constants.AccountConstants;
 import com.xuleyan.finals.dal.pojo.Account;
 import com.xuleyan.finals.service.api.AccountService;
 import com.xuleyan.finals.web.annotation.Encryption;
+import com.xuleyan.finals.web.annotation.Masking;
 import com.xuleyan.finals.web.domain.User;
 import com.xuleyan.frame.common.util.BQSnowFlakeUtils;
 import com.xuleyan.frame.extend.lock.DistributedLock;
@@ -61,13 +62,12 @@ public class AccountController {
 
     @RequestMapping("/list")
     @Encryption
+    @Masking
     public Object getList(@RequestBody User user) {
         System.out.println("运行程序: getList");
-        Account account = new Account();
-        account.setId(1);
-        account.setName(user.getName());
-        List<Account> accountList = new ArrayList<>();
-        accountList.add(account);
+
+        List<User> accountList = new ArrayList<>();
+        accountList.add(user);
         return JSON.toJSONString(accountList);
     }
 

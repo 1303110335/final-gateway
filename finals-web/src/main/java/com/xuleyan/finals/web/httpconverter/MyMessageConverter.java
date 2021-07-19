@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 /**
- *
+ * 专门开辟一种MediaType去处理
  * @author xuleyan
  * @version MyMessageConverter.java, v 0.1 2021-07-19 9:28 下午
  */
