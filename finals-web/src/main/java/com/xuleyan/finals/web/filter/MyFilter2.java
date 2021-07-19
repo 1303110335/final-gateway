@@ -29,6 +29,6 @@ public class MyFilter2 implements Filter {
 
     @Override
     public void destroy() {
-
+        System.out.println("MyFilter:destroy");
     }
 }

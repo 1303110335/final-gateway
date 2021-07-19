@@ -4,6 +4,7 @@
  */
 package com.xuleyan.finals.web.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.xuleyan.finals.common.constants.AccountConstants;
 import com.xuleyan.finals.dal.pojo.Account;
 import com.xuleyan.finals.service.api.AccountService;
@@ -59,13 +60,15 @@ public class AccountController {
 
 
     @RequestMapping("/list")
-    public Object getList() {
+    @Encryption
+    public Object getList(@RequestBody User user) {
+        System.out.println("运行程序: getList");
         Account account = new Account();
         account.setId(1);
-        account.setName(null);
+        account.setName(user.getName());
         List<Account> accountList = new ArrayList<>();
         accountList.add(account);
-        return accountList;
+        return JSON.toJSONString(accountList);
     }
 
     /**

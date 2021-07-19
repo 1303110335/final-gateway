@@ -8,11 +8,13 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.xuleyan.finals.web.converter.MaskJackson2HttpMessageConverter;
+import com.xuleyan.finals.web.converter.MaskStringHttpMessageConverter;
 import com.xuleyan.finals.web.httpconverter.MyMessageConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -34,6 +36,9 @@ public class WebAppConfigurer implements WebMvcConfigurer {
     @Resource
     private MaskJackson2HttpMessageConverter maskJackson2HttpMessageConverter;
 
+    @Resource
+    private MaskStringHttpMessageConverter maskStringHttpMessageConverter;
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         log.info("注入 CheckUserInterceptor");
@@ -50,6 +55,9 @@ public class WebAppConfigurer implements WebMvcConfigurer {
         for (int i = 0; i < converters.size(); i++) {
             if (converters.get(i).getClass().equals(MappingJackson2HttpMessageConverter.class)) {
                 converters.set(i, maskJackson2HttpMessageConverter);
+            }
+            if (converters.get(i).getClass().equals(StringHttpMessageConverter.class)) {
+                converters.set(i, maskStringHttpMessageConverter);
             }
         }
         FastJsonHttpMessageConverter fjc = new FastJsonHttpMessageConverter();

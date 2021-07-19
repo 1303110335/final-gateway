@@ -23,7 +23,7 @@ public class MaskJackson2HttpMessageConverter extends MappingJackson2HttpMessage
 
     @Override
     protected void writeInternal(Object object, Type type, HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
-        System.out.println("writeInternal :" + JSON.toJSONString(object));
+        System.out.println("jackson2:writeInternal :" + JSON.toJSONString(object));
         super.writeInternal(object, type, outputMessage);
     }
 }

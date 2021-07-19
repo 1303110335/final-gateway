@@ -35,10 +35,11 @@ public class GlobalHandlerAspect {
         try {
             MethodSignature signature = (MethodSignature) joinPoint.getSignature();
             Method method = signature.getMethod();
-            System.out.println("method:" + method.getName());
+            System.out.println("aspect: method:" + method.getName());
             Object[] args = joinPoint.getArgs();
-            System.out.println("args:" + Arrays.toString(args));
+            System.out.println("aspect: args:" + Arrays.toString(args));
             proceed = joinPoint.proceed();
+            System.out.println("aspect : args:" + Arrays.toString(args) + "result: " + proceed);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
