@@ -7,10 +7,14 @@ package com.xuleyan.finals.web.controller;
 import com.xuleyan.finals.common.constants.AccountConstants;
 import com.xuleyan.finals.dal.pojo.Account;
 import com.xuleyan.finals.service.api.AccountService;
+import com.xuleyan.finals.web.annotation.Encryption;
+import com.xuleyan.finals.web.domain.User;
 import com.xuleyan.frame.common.util.BQSnowFlakeUtils;
 import com.xuleyan.frame.extend.lock.DistributedLock;
 import com.xuleyan.frame.extend.redis.jedis.JedisTemplate;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -43,8 +47,9 @@ public class AccountController {
 
     private volatile AtomicInteger errNumber = new AtomicInteger(1);
 
-    @RequestMapping("/hello")
-    public String hello() {
+    @PostMapping("/hello")
+    @Encryption
+    public String hello(@RequestBody User user) {
         return "hello";
     }
 
