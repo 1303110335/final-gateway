@@ -1,5 +1,5 @@
 /**
- * bianque.com
+ * xuleyan.com
  * Copyright (C) 2013-2021 All Rights Reserved.
  */
 package com.xuleyan.finals.web.domain;
