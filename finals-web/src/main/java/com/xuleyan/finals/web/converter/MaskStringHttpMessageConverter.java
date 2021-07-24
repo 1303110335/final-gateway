@@ -19,7 +19,7 @@ import java.io.IOException;
 public class MaskStringHttpMessageConverter extends StringHttpMessageConverter {
     @Override
     protected void writeInternal(String str, HttpOutputMessage outputMessage) throws IOException {
-        System.out.println("String:writeInternal :" + str);
+        //System.out.println("String:writeInternal :" + str);
         super.writeInternal(str, outputMessage);
     }
 }

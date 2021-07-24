@@ -9,7 +9,7 @@ import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.xuleyan.finals.web.converter.MaskJackson2HttpMessageConverter;
 import com.xuleyan.finals.web.converter.MaskStringHttpMessageConverter;
-import com.xuleyan.finals.web.httpconverter.MyMessageConverter;
+//import com.xuleyan.finals.web.httpconverter.MyMessageConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,8 +41,8 @@ public class WebAppConfigurer implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        log.info("注入 CheckUserInterceptor");
-        registry.addInterceptor(new CheckUserInterceptor()).addPathPatterns("/**");
+//        log.info("注入 CheckUserInterceptor");
+//        registry.addInterceptor(new CheckUserInterceptor()).addPathPatterns("/**");
     }
 
     /**
@@ -68,10 +68,10 @@ public class WebAppConfigurer implements WebMvcConfigurer {
         //converters.add(converter());
     }
 
-    @Bean
-    public MyMessageConverter converter() {
-        return new MyMessageConverter();
-    }
+//    @Bean
+//    public MyMessageConverter converter() {
+//        return new MyMessageConverter();
+//    }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {

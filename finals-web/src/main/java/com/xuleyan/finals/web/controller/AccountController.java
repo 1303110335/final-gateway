@@ -6,15 +6,22 @@ package com.xuleyan.finals.web.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.xuleyan.finals.common.constants.AccountConstants;
+import com.xuleyan.finals.common.constants.TopicConstants;
 import com.xuleyan.finals.dal.pojo.Account;
 import com.xuleyan.finals.service.api.AccountService;
+import com.xuleyan.finals.service.api.param.GoodsParam;
 import com.xuleyan.finals.web.annotation.Encryption;
-import com.xuleyan.finals.web.annotation.Masking;
+import com.xuleyan.finals.web.annotation.GoodsLimiter;
 import com.xuleyan.finals.web.domain.User;
+import com.xuleyan.finals.web.transaction.GoodsProducer;
+import com.xuleyan.finals.web.transaction.GoodsTransactionListener;
 import com.xuleyan.frame.common.util.BQSnowFlakeUtils;
 import com.xuleyan.frame.extend.lock.DistributedLock;
 import com.xuleyan.frame.extend.redis.jedis.JedisTemplate;
+import com.xuleyan.frame.mask.annotation.Masking;
+import com.xuleyan.provider.facade.GoodsFacade;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -44,9 +51,21 @@ public class AccountController {
     @Resource
     private DistributedLock distributedLock;
 
+    @Resource
+    private GoodsTransactionListener goodsTransactionListener;
+
     private ThreadLocalRandom random = ThreadLocalRandom.current();
 
     private volatile AtomicInteger errNumber = new AtomicInteger(1);
+
+    @Reference
+    private GoodsFacade goodsFacade;
+
+    @RequestMapping("/goodsDubbo")
+    public String goodsDubbo() {
+        String result = goodsFacade.consumeGoods("haha");
+        return "this is " + result;
+    }
 
     @PostMapping("/hello")
     @Encryption
@@ -64,7 +83,7 @@ public class AccountController {
     @Encryption
     @Masking
     public Object getList(@RequestBody User user) {
-        System.out.println("运行程序: getList");
+        //System.out.println("运行程序: getList");
 
         List<User> accountList = new ArrayList<>();
         accountList.add(user);
@@ -81,7 +100,10 @@ public class AccountController {
         Integer id = 1;
 
         String requestId = BQSnowFlakeUtils.generate();
-        accountService.insertAndSubGoods(id, requestId);
+        GoodsParam goodsParam = new GoodsParam();
+        goodsParam.setId(id);
+        goodsParam.setRequestId(requestId);
+        accountService.insertAndSubGoods(goodsParam);
 
         return "success";
     }
@@ -188,6 +210,18 @@ public class AccountController {
      * 失败 7847
      * 开始： 12:10:47.040 耗时25s
      * 结束： 12:11:12.001
+     *
+     *
+     * rocketmq 分布式消息  11s处理 300个
+     * 800个线程 10组
+     * 开始：10:58:36.568
+     * 结束：10:58:47.878
+     *
+     * 加上rateLimiter 灵牌桶算法 11s 处理300个
+     * 800个线程 10组
+     * 开始：15:23:49.608
+     * 结束：15:23:58.760
+     *
      * <p>
      * 第一秒进入的线程请求近 1000个
      * 加一个RateLimiter ,限制每秒300个
@@ -203,10 +237,11 @@ public class AccountController {
      * <p>
      * 经验： 可以提前设置商品数量到redis中，减少一开始访问查询数据库过多而将数据库连接占满
      * <p>
-     * zookeeper分布式锁，在高并发场景下效率较低，由于创建节点和删除节点都比较消耗资源，适用于高可靠而并发亮不是很大的场景
+     * zookeeper分布式锁，在高并发场景下效率较低，由于创建节点和删除节点都比较消耗资源，适用于高可靠而并发量不是很大的场景
      *
      * @return
      */
+    @GoodsLimiter(limit = 300)
     @RequestMapping("/getGoods")
     public String getGoods() {
 
@@ -226,8 +261,10 @@ public class AccountController {
 
         String requestId = BQSnowFlakeUtils.generate();
         if (goodsNum > 0) {
+            // 方案一：redis锁
             boolean success = jedisTemplate.setIfAbsent(lockKey, requestId, 1);
-//            boolean success = getZookeeperLock(lockKey);
+            // 方案二：zookeeper锁
+            //boolean success = getZookeeperLock(lockKey);
             if (success) {
                 log.info("获取锁成功");
                 try {
@@ -235,18 +272,28 @@ public class AccountController {
                     goodsNumStr = goodsNumStr == null ? "0" : goodsNumStr;
                     if (Integer.parseInt(goodsNumStr) > 0) {
                         goodsNum = Integer.parseInt(goodsNumStr);
-                        accountService.insertAndSubGoods(id, requestId);
-//                        if (goodsNum == 100 && errNumber.getAndDecrement() > 0) {
-//                            // @TODO 模拟机器宕机,出现异常, 需要有补偿方案
-//                            int b  = 0 ;
-//                            int num = 100 / b;
-//                        }
+
+                        GoodsParam goodsParam = new GoodsParam();
+                        goodsParam.setId(id);
+                        goodsParam.setRequestId(requestId);
+                        // 方案一：直接操作数据库，然后redis值递减一
+                        // accountService.insertAndSubGoods(goodsParam);
+
+                        // 方案二：通过事务消息来实现发送消息和本地事务执行的一致性
+                        GoodsProducer.setTransactionListener(goodsTransactionListener);
+                        GoodsProducer.sendTransMessage(TopicConstants.GOODS_TOPIC, requestId, goodsParam);
+
+                        doSomethingError(goodsNum);
                         log.info("当前商品数量 : {} ,商品数量减一", goodsNum);
                         jedisTemplate.increBy(key, -1L);
                     }
+                } catch (Exception ex) {
+                    log.error("操作mysql减库存或redis减库存失败", ex);
                 } finally {
+                    // 方案一：redis解锁
                     removeLockKey(lockKey, requestId);
-//                    removeZookeeperLock(lockKey);
+                    // 方案二：zookeeper解锁
+                    //removeZookeeperLock(lockKey);
                     log.info("释放锁");
                 }
             } else {
@@ -258,6 +305,36 @@ public class AccountController {
         }
 
         return "success";
+    }
+
+    /**
+     * 用消息来实现分布式事务
+     */
+    @RequestMapping("mqgoods")
+    public void getGoodsByMq() {
+
+        Integer id = 1;
+        String requestId = BQSnowFlakeUtils.generate();
+        GoodsParam goodsParam = new GoodsParam();
+        goodsParam.setId(id);
+        goodsParam.setRequestId(requestId);
+
+        // 确保发送消息和本地事务同时成功
+        GoodsProducer.setTransactionListener(goodsTransactionListener);
+        GoodsProducer.sendTransMessage(TopicConstants.GOODS_TOPIC, requestId, goodsParam);
+        // 告诉第三方去扣减用户银行卡的余额
+    }
+
+    /**
+     * 让服务器在某种情况下出错,模拟异常
+     * @param goodsNum
+     */
+    private void doSomethingError(Integer goodsNum) {
+        if (goodsNum == 100 && errNumber.getAndDecrement() > 0) {
+            // @TODO 模拟机器宕机,出现异常, 需要有补偿方案
+            int b = 0;
+            int num = 100 / b;
+        }
     }
 
     private void removeZookeeperLock(String lockKey) {

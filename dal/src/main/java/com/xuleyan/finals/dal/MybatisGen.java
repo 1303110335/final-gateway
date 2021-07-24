@@ -12,7 +12,7 @@ import java.util.List;
 public class MybatisGen {
 
     public static void main(String[] args) throws Exception {
-        System.out.println("------Begin------");
+        //System.out.println("------Begin------");
         List<String> warnings = new ArrayList<>();
         boolean overwrite = true;
         InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("generatorConfig.xml");
@@ -22,10 +22,10 @@ public class MybatisGen {
         MyBatisGenerator myBatisGenerator = new MyBatisGenerator(config, callback, warnings);
         myBatisGenerator.generate(null);
         if (warnings.isEmpty()) {
-            System.out.println("MyBatis文件生成成功！！");
+            //System.out.println("MyBatis文件生成成功！！");
         } else {
             System.err.println(warnings);
         }
-        System.out.println("------End------");
+        //System.out.println("------End------");
     }
 }

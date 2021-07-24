@@ -14,10 +14,6 @@
 
     <dependencies>
         <dependency>
-            <artifactId>bqhealth-cloud-interface</artifactId>
-            <groupId>com.alijk.bqhealth.cloud</groupId>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>
         </dependency>
@@ -53,17 +49,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.alibaba.boot</groupId>
-            <artifactId>dubbo-spring-boot-actuator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba.boot</groupId>
+            <groupId>org.apache.dubbo</groupId>
             <artifactId>dubbo-spring-boot-starter</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.xuleyan.provider</groupId>-->
-<!--            <artifactId>facade</artifactId>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>com.xuleyan.framework</groupId>
             <artifactId>extend</artifactId>

@@ -30,11 +30,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.alibaba.boot</groupId>
-            <artifactId>dubbo-spring-boot-actuator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba.boot</groupId>
+            <groupId>org.apache.dubbo</groupId>
             <artifactId>dubbo-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
@@ -45,20 +41,20 @@
             <groupId>com.xuleyan.framework</groupId>
             <artifactId>web</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.jodd</groupId>
-            <artifactId>jodd-bean</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.jodd</groupId>-->
+<!--            <artifactId>jodd-bean</artifactId>-->
+<!--        </dependency>-->
 
-        <dependency>
-            <groupId>org.jodd</groupId>
-            <artifactId>jodd-core</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.jodd</groupId>-->
+<!--            <artifactId>jodd-core</artifactId>-->
+<!--        </dependency>-->
 
-        <dependency>
-            <groupId>org.example</groupId>
-            <artifactId>client</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.example</groupId>-->
+<!--            <artifactId>client</artifactId>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>com.xuleyan.framework</groupId>
             <artifactId>common</artifactId>
@@ -77,13 +73,60 @@
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-framework</artifactId>
         </dependency>
+
         <dependency>
-            <groupId>com.alibaba.otter</groupId>
-            <artifactId>canal.client</artifactId>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+        </dependency>
+
+<!--        <dependency>-->
+<!--            <groupId>com.alibaba.otter</groupId>-->
+<!--            <artifactId>canal.client</artifactId>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>com.google.protobuf</groupId>-->
+<!--            <artifactId>protobuf-java</artifactId>-->
+<!--        </dependency>-->
+        <dependency>
+            <groupId>com.xuleyan.framework</groupId>
+            <artifactId>mask</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.google.protobuf</groupId>
-            <artifactId>protobuf-java</artifactId>
+            <groupId>org.apache.rocketmq</groupId>
+            <artifactId>rocketmq-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.rocketmq</groupId>
+            <artifactId>rocketmq-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.rocketmq</groupId>
+            <artifactId>rocketmq-remoting</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.xuleyan.provider</groupId>
+            <artifactId>facade</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.xuleyan.framework</groupId>
+            <artifactId>tracer</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
         </dependency>
     </dependencies>
 </project>

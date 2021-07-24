@@ -10,7 +10,9 @@ import com.xuleyan.finals.dal.mapper.GoodsSecondsKillMapper;
 import com.xuleyan.finals.dal.pojo.Account;
 import com.xuleyan.finals.dal.pojo.AccountCriteria;
 import com.xuleyan.finals.dal.pojo.GoodsSecondsKill;
+import com.xuleyan.finals.dal.pojo.GoodsSecondsKillCriteria;
 import com.xuleyan.finals.service.api.AccountService;
+import com.xuleyan.finals.service.api.param.GoodsParam;
 import com.xuleyan.frame.extend.redis.jedis.JedisTemplate;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -64,16 +66,30 @@ public class AccountServiceImpl implements AccountService {
         return goodsSecondsKillMapper.insert(record);
     }
 
+    @Override
+    public GoodsSecondsKill findGoods(String userId) {
+        GoodsSecondsKillCriteria example = new GoodsSecondsKillCriteria();
+        GoodsSecondsKillCriteria.Criteria criteria = example.createCriteria();
+        criteria.andUserIdEqualTo(userId);
+        List<GoodsSecondsKill> goodsSecondsKills = goodsSecondsKillMapper.selectByExample(example);
+        if (CollectionUtils.isNotEmpty(goodsSecondsKills)) {
+            return goodsSecondsKills.get(0);
+        }
+        return null;
+    }
+
+
     /**
      * 判断操作是否成功， 成功返回true, 失败返回false
-     * @param id
-     * @param requestId
+     * @param param
      * @return
      */
     @Override
     @Transactional(value = "xlyTransactionManager",rollbackFor = Exception.class)
-    public boolean insertAndSubGoods(Integer id, String requestId) {
+    public boolean insertAndSubGoods(GoodsParam param) {
         try {
+            String requestId = param.getRequestId();
+            Integer id = param.getId();
             int insertRows = insertGoods(requestId);
             int affectRows = subGoods(id);
             log.info("insertRows = {}, affectRows = {}", insertRows, affectRows);

@@ -5,6 +5,8 @@
 package com.xuleyan.finals.service.api;
 
 import com.xuleyan.finals.dal.pojo.Account;
+import com.xuleyan.finals.dal.pojo.GoodsSecondsKill;
+import com.xuleyan.finals.service.api.param.GoodsParam;
 
 /**
  *
@@ -17,7 +19,25 @@ public interface AccountService {
 
     int subGoods(Integer id);
 
+    /**
+     * 插入秒杀记录
+     * @param userId
+     * @return
+     */
     int insertGoods(String userId);
 
-    boolean insertAndSubGoods(Integer id, String requestId);
+    /**
+     * 获取秒杀记录
+     * @param userId
+     * @return
+     */
+    GoodsSecondsKill findGoods(String userId);
+
+    /**
+     * 插入秒杀记录并更新redis
+     * 假设插入提现记录，扣减用户余额
+     * @param goodsParam
+     * @return
+     */
+    boolean insertAndSubGoods(GoodsParam goodsParam);
 }

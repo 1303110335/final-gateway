@@ -21,6 +21,6 @@ public class CommonService {
     private UserAService userAService;
 
     public void test() {
-        System.out.println("test");
+        //System.out.println("test");
     }
 }
