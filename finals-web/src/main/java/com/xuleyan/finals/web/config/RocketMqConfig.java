@@ -5,7 +5,6 @@
 package com.xuleyan.finals.web.config;
 
 import com.xuleyan.finals.web.transaction.GoodsProducer;
-import com.xuleyan.finals.web.transaction.GoodsTransactionListener;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.stereotype.Component;
 

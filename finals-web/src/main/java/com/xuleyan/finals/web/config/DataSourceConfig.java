@@ -5,6 +5,7 @@
 package com.xuleyan.finals.web.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import org.apache.ibatis.session.LocalCacheScope;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -40,7 +41,7 @@ public class DataSourceConfig {
     public SqlSessionFactory xlySqlSessionFactory(@Qualifier("xlyDataSource") DataSource dataSource) throws Exception {
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
         sqlSessionFactoryBean.setDataSource(dataSource);
-        sqlSessionFactoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath*:sqlmapper/**/*.xml"));
+        sqlSessionFactoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath:sqlmapper/**/*.xml"));
         return sqlSessionFactoryBean.getObject();
     }
 
@@ -51,6 +52,10 @@ public class DataSourceConfig {
 
     @Bean(name = "xlySqlSessionTemplate")
     public SqlSessionTemplate xlySqlSessionTemplate(@Qualifier("xlySqlSessionFactory") SqlSessionFactory sqlSessionFactory) {
-        return new SqlSessionTemplate(sqlSessionFactory);
+        SqlSessionTemplate sqlSessionTemplate = new SqlSessionTemplate(sqlSessionFactory);
+        // 全局删除一级缓存
+//        org.apache.ibatis.session.Configuration configuration = sqlSessionTemplate.getConfiguration();
+//        configuration.setLocalCacheScope(LocalCacheScope.STATEMENT);
+        return sqlSessionTemplate;
     }
 }

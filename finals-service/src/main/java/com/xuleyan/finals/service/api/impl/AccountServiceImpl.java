@@ -17,7 +17,6 @@ import com.xuleyan.frame.extend.redis.jedis.JedisTemplate;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -43,7 +42,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account findOne(Integer id) {
-        log.info("查询数据库 >> findOne >> id = {}", id);
+//        log.info("查询数据库 >> findOne >> id = {}", id);
         AccountCriteria example = new AccountCriteria();
         example.createCriteria().andIdEqualTo(id);
         List<Account> accounts = accountExtMapper.selectByExample(example);
@@ -85,14 +84,13 @@ public class AccountServiceImpl implements AccountService {
      * @return
      */
     @Override
-    @Transactional(value = "xlyTransactionManager",rollbackFor = Exception.class)
     public boolean insertAndSubGoods(GoodsParam param) {
         try {
             String requestId = param.getRequestId();
             Integer id = param.getId();
             int insertRows = insertGoods(requestId);
             int affectRows = subGoods(id);
-            log.info("insertRows = {}, affectRows = {}", insertRows, affectRows);
+            log.info("insertRows = {}, affectRows = {}, requestId = {}", insertRows, affectRows, requestId);
             if (insertRows != 1 || affectRows != 1) {
                 // 出现异常，insertRows !=1 可能是插入了重复的用户，需要回滚
                 // affectRows != 1 可能是商品已经为0了，需要回滚
@@ -100,7 +98,7 @@ public class AccountServiceImpl implements AccountService {
                 // 重新设置redis中的值
                 jedisTemplate.setEx(AccountConstants.GOODS_KEY, account.getGoods().toString(), AccountConstants.GOODS_TIME);
                 log.error("出现异常, 重新更新redis中的值, goods = {}", account.getGoods());
-                throw new RuntimeException("异常");
+                throw new RuntimeException("更新数据库异常，可能出现商品为0的情况");
             }
             return true;
         } catch (Exception e) {

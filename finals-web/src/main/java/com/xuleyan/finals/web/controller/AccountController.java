@@ -22,23 +22,23 @@ import com.xuleyan.frame.mask.annotation.Masking;
 import com.xuleyan.provider.facade.GoodsFacade;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
+import org.apache.dubbo.rpc.RpcContext;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author xuleyan
  * @version AccountController.java, v 0.1 2021-07-16 11:01 下午
  */
 @RestController
-@RequestMapping("account")
+@RequestMapping(value = "account", produces = "text/plain;charset=utf-8")
 @Slf4j
 public class AccountController {
 
@@ -58,19 +58,57 @@ public class AccountController {
 
     private volatile AtomicInteger errNumber = new AtomicInteger(1);
 
-    @Reference
+    @Reference(check = false)
     private GoodsFacade goodsFacade;
 
     @RequestMapping("/goodsDubbo")
     public String goodsDubbo() {
-        String result = goodsFacade.consumeGoods("haha");
-        return "this is " + result;
+        String result = "服务器开了个小差~";
+        try {
+            CompletableFuture<String> future = RpcContext.getContext().asyncCall(() -> goodsFacade.consumeGoods("haha"));
+            log.info("result = {}", future.get());
+            return "this is " + future.get();
+        } catch (Exception ex) {
+            log.error("服务器异常", ex);
+        }
+
+        return result;
+
     }
 
-    @PostMapping("/hello")
-    @Encryption
-    public String hello(@RequestBody User user) {
-        return "hello";
+    @GetMapping("/asyncHello")
+    public String asyncHello() {
+        CompletableFuture<String> result = goodsFacade.sayHello("haha");
+        AtomicReference<String> s = new AtomicReference<>();
+//        try {
+//            s = result.get();
+//            log.info("result = {}", s);
+//        } catch (InterruptedException | ExecutionException e) {
+//            e.printStackTrace();
+//        }
+        result.whenComplete((v, t) -> {
+            if (t != null) {
+                t.printStackTrace();
+            } else {
+                s.set(v);
+                // 后输出
+                log.info("response : {}", v);
+            }
+        });
+        // 早于结果输出
+        log.info("end response : {}", s.get());
+        return s.get();
+    }
+
+    @GetMapping("/hello")
+//    @Encryption
+//    public String hello(@RequestBody User user) {
+    public String hello() {
+        // 线程复用，threadLocal值不清除，会一直存在并复用
+        String result = goodsFacade.consumeGoods("haha");
+
+        log.info("result = {}", result);
+        return result;
     }
 
     @RequestMapping("/test")
@@ -90,21 +128,49 @@ public class AccountController {
         return JSON.toJSONString(accountList);
     }
 
+    @RequestMapping(value = "/show")
+    public String showGoods() {
+        Account account = accountService.findOne(1);
+        return JSON.toJSONString(account);
+    }
+
     /**
      * 模拟两个线程同时进入数据库操作方法
+     * 全靠mysql干活测试
      *
      * @return
      */
     @RequestMapping("/getGoods2")
     public String getGoods2() {
         Integer id = 1;
+        Account account = accountService.findOne(id);
+        log.info("account数量={}", account.getGoods());
+        if (account.getGoods() > 0) {
+            String requestId = BQSnowFlakeUtils.generate();
+            GoodsParam goodsParam = new GoodsParam();
+            goodsParam.setId(id);
+            goodsParam.setRequestId(requestId);
+            try {
+                accountService.insertAndSubGoods(goodsParam);
+            } catch (Exception e) {
+                log.info("获取锁失败【前方排队拥挤，请重试】");
+                return "fail";
+            }
+            return "success";
+        } else {
+            log.info("获取锁失败【前方排队拥挤，请重试】");
+            return "fail";
+        }
+    }
 
+    @RequestMapping("getGoodsByRedisAndMq")
+    public String getGoodsByRedisAndMq() {
+        // 减一操作，当数量为0，减一为-1
+        // 当key不存在，减一为-1
         String requestId = BQSnowFlakeUtils.generate();
-        GoodsParam goodsParam = new GoodsParam();
-        goodsParam.setId(id);
-        goodsParam.setRequestId(requestId);
-        accountService.insertAndSubGoods(goodsParam);
-
+        boolean send = GoodsProducer.send(TopicConstants.GOODS_TOPIC, requestId);
+        String message = send ? "成功" : "失败";
+        log.info("发送消息{}, requestId = {}", message, requestId);
         return "success";
     }
 
@@ -210,13 +276,13 @@ public class AccountController {
      * 失败 7847
      * 开始： 12:10:47.040 耗时25s
      * 结束： 12:11:12.001
-     *
-     *
+     * <p>
+     * <p>
      * rocketmq 分布式消息  11s处理 300个
      * 800个线程 10组
      * 开始：10:58:36.568
      * 结束：10:58:47.878
-     *
+     * <p>
      * 加上rateLimiter 灵牌桶算法 11s 处理300个
      * 800个线程 10组
      * 开始：15:23:49.608
@@ -277,11 +343,11 @@ public class AccountController {
                         goodsParam.setId(id);
                         goodsParam.setRequestId(requestId);
                         // 方案一：直接操作数据库，然后redis值递减一
-                        // accountService.insertAndSubGoods(goodsParam);
+                        accountService.insertAndSubGoods(goodsParam);
 
                         // 方案二：通过事务消息来实现发送消息和本地事务执行的一致性
-                        GoodsProducer.setTransactionListener(goodsTransactionListener);
-                        GoodsProducer.sendTransMessage(TopicConstants.GOODS_TOPIC, requestId, goodsParam);
+//                        GoodsProducer.setTransactionListener(goodsTransactionListener);
+//                        GoodsProducer.sendTransMessage(TopicConstants.GOODS_TOPIC, requestId, goodsParam);
 
                         doSomethingError(goodsNum);
                         log.info("当前商品数量 : {} ,商品数量减一", goodsNum);
@@ -327,6 +393,7 @@ public class AccountController {
 
     /**
      * 让服务器在某种情况下出错,模拟异常
+     *
      * @param goodsNum
      */
     private void doSomethingError(Integer goodsNum) {

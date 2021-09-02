@@ -7,6 +7,7 @@ package com.xuleyan.finals.service.api;
 import com.xuleyan.finals.dal.pojo.Account;
 import com.xuleyan.finals.dal.pojo.GoodsSecondsKill;
 import com.xuleyan.finals.service.api.param.GoodsParam;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -39,5 +40,6 @@ public interface AccountService {
      * @param goodsParam
      * @return
      */
+    @Transactional(value = "xlyTransactionManager",rollbackFor = Exception.class)
     boolean insertAndSubGoods(GoodsParam goodsParam);
 }

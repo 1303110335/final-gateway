@@ -198,4 +198,16 @@ public class Account {
     public void setGoods(Integer goods) {
         this.goods = goods;
     }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", age=" + age +
+                ", phone='" + phone + '\'' +
+                ", address='" + address + '\'' +
+                ", goods=" + goods +
+                '}';
+    }
 }

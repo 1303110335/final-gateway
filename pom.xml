@@ -209,34 +209,34 @@
                 <version>${curator.version}</version>
             </dependency>
 
-            <!--<dependency>-->
-            <!--<groupId>aspectj</groupId>-->
-            <!--<artifactId>aspectjweaver</artifactId>-->
-            <!--<version>1.5.3</version>-->
-            <!--</dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>aspectj</groupId>-->
+<!--                <artifactId>aspectjweaver</artifactId>-->
+<!--                <version>1.5.3</version>-->
+<!--            </dependency>-->
 
             <!-- https://mvnrepository.com/artifact/com.alibaba.otter/canal.client -->
-<!--            <dependency>-->
-<!--                <groupId>com.alibaba.otter</groupId>-->
-<!--                <artifactId>canal.client</artifactId>-->
-<!--                <version>${canal.client.version}</version>-->
-<!--                <exclusions>-->
-<!--                    <exclusion>-->
-<!--                        <groupId>ch.qos.logback</groupId>-->
-<!--                        <artifactId>logback-classic</artifactId>-->
-<!--                    </exclusion>-->
-<!--                    <exclusion>-->
-<!--                        <groupId>ch.qos.logback</groupId>-->
-<!--                        <artifactId>logback-core</artifactId>-->
-<!--                    </exclusion>-->
-<!--                </exclusions>-->
-<!--            </dependency>-->
+            <!--            <dependency>-->
+            <!--                <groupId>com.alibaba.otter</groupId>-->
+            <!--                <artifactId>canal.client</artifactId>-->
+            <!--                <version>${canal.client.version}</version>-->
+            <!--                <exclusions>-->
+            <!--                    <exclusion>-->
+            <!--                        <groupId>ch.qos.logback</groupId>-->
+            <!--                        <artifactId>logback-classic</artifactId>-->
+            <!--                    </exclusion>-->
+            <!--                    <exclusion>-->
+            <!--                        <groupId>ch.qos.logback</groupId>-->
+            <!--                        <artifactId>logback-core</artifactId>-->
+            <!--                    </exclusion>-->
+            <!--                </exclusions>-->
+            <!--            </dependency>-->
 
-<!--            <dependency>-->
-<!--                <groupId>com.google.protobuf</groupId>-->
-<!--                <artifactId>protobuf-java</artifactId>-->
-<!--                <version>${protobuf.version}</version>-->
-<!--            </dependency>-->
+            <!--            <dependency>-->
+            <!--                <groupId>com.google.protobuf</groupId>-->
+            <!--                <artifactId>protobuf-java</artifactId>-->
+            <!--                <version>${protobuf.version}</version>-->
+            <!--            </dependency>-->
 
             <dependency>
                 <groupId>org.apache.rocketmq</groupId>

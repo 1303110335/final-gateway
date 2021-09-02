@@ -17,8 +17,7 @@ public class TopicConstants {
     public static final String GOODS_TOPIC = "Goods_topic";
 
     /**
-     * 消费者组
+     * 消费者组 使用star
      */
     public static final String GOODS_CONSUMER_GROUP = "Goods_group";
-    public static final String GOODS_CONSUMER_GROUP_2 = "Goods_group_2";
 }
